@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول - الخدمات الاجتماعية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #f5f6fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .login-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      width: 320px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 25px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      background-color: #3498db;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+
+    .message {
+      margin-top: 15px;
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* واجهة المستخدم بعد تسجيل الدخول */
+    #userInterface {
+      display: none;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box" id="loginBox">
+    <h2>تسجيل الدخول</h2>
+    <input type="text" id="account" placeholder="رقم الحساب">
+    <input type="password" id="password" placeholder="الرقم السري">
+    <button onclick="login()">دخول</button>
+    <div class="message" id="message"></div>
+  </div>
+
+  <!-- واجهة المستخدم بعد تسجيل الدخول -->
+  <div id="userInterface">
+    <h2>مرحبًا بك في الخدمات الاجتماعية 🎉</h2>
+    <p>تم تسجيل الدخول بنجاح.</p>
+    <button onclick="logout()">تسجيل الخروج</button>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXTRsJS4gb-aHaw9mR4sSvf5Gd_6WVgZv9kubF12OeqTFw4OWxhnR5QuGmHPWwI72l/exec"; // ضع رابط السكربت هنا
+
+    async function login() {
+      const account = document.getElementById("account").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const message = document.getElementById("message");
+
+      message.textContent = "";
+
+      if (!account || !password) {
+        message.textContent = "يرجى إدخال جميع الحقول";
+        return;
+      }
+
+      try {
+        const response = await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ account, password })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          document.getElementById("loginBox").style.display = "none";
+          document.getElementById("userInterface").style.display = "block";
+        } else {
+          message.textContent = "رقم الحساب أو كلمة المرور غير صحيحة";
+        }
+
+      } catch (error) {
+        console.error(error);
+        message.textContent = "⚠️ حدث خطأ في الاتصال بالسيرفر";
+      }
+    }
+
+    function logout() {
+      document.getElementById("userInterface").style.display = "none";
+      document.getElementById("loginBox").style.display = "block";
+      document.getElementById("account").value = "";
+      document.getElementById("password").value = "";
+      document.getElementById("message").textContent = "";
+    }
+  </script>
+</body>
+</html>
